@@ -1,13 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+// import './index.css';
+// import App from './App';
 import reportWebVitals from './reportWebVitals';
+// Bootstrap CSS
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+// Bootstrap Bundle JS
+import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
+
+import "./assets/css/style.css"
+import LandingPage from './pages/LandingPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    {/* <App /> */}
+    <LandingPage />
   </React.StrictMode>
 );
 
