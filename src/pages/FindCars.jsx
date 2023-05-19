@@ -1,4 +1,4 @@
-import { Card, Col, Image, Row } from 'react-bootstrap';
+import { Card, Col, Image, ListGroup, Row } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -11,9 +11,76 @@ import Instagram from "../assets/svg/icon_instagram.svg";
 import Twitter from "../assets/svg/icon_twitter.svg";
 import Mail from "../assets/svg/icon_mail.svg";
 import Twitch from "../assets/svg/icon_twitch.svg";
+import User from "../assets/svg/fi_users.svg";
+import Setting from "../assets/svg/fi_settings.svg";
+import Calender from "../assets/svg/fi_calendar.svg";
 import CarIMG from "../assets/img/img_car.png";
+// import * as Img from '../assets/images/'
+import { useEffect, useState } from 'react';
 
 const FindCars = () => {
+  const [data, setData] = useState([])
+  const [formValue, setFormValue] = useState([])
+  const [filterData, setFilterData] = useState([])
+  const api = "https://raw.githubusercontent.com/fnurhidayat/probable-garbanzo/main/data/cars.min.json"
+
+  const getData = async () => {
+    const res = await fetch(api)
+    const datas = await res.json()
+
+    setData(datas)
+  }
+
+  useEffect(() => {
+    getData()
+  }, [])
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    // const tipe = e.target.value
+    // if (tipe === "Default") {
+    //   setFilterData(data)
+    // } else {
+    //   const filterData = data.filter((data) => data.available === Boolean(tipe))
+
+    //   setFilterData(filterData)
+    // }
+
+    const filter = data.filter((data) => {
+      const dataTime = new Date(data.availableAt)
+      const miliDataTime = Number(dataTime.getTime())
+      const dateFilter = miliDataTime > formValue.jemput
+      const capacityFilter = data.capacity == formValue.penumpang
+      const tipe = formValue.tipe === "true" ? true : false
+      // const nameDriver = tipe === true ? "Dengan Supir" : "Tanpa Supir"
+      const tipeDriverFilter = tipe === data.available
+
+      
+      if (formValue.tipe && formValue.jemput && formValue.tanggal && formValue.penumpang) {
+        return tipeDriverFilter && capacityFilter && dateFilter
+      } else if (formValue.tipe && formValue.jemput && formValue.tanggal) {
+        console.log("kk");
+        return tipeDriverFilter && dateFilter
+      } else if (formValue.tipe && formValue.penumpang) {
+        console.log("ll");
+        return tipeDriverFilter && capacityFilter
+      } else if (formValue.tipe) {
+        return tipeDriverFilter
+      } else if (formValue.tipe === "Default") {
+        return data
+      } {
+        return false
+      }
+      // console.log(formValue.tipe);
+      // data.available === Boolean(tipe)
+    })
+    console.log(filter);
+
+    setFilterData(filter)
+
+    // console.log(formValue);
+  }
+
   return (
     <>
       <Navbar key={"md"} bg="light" expand={"md"}>
@@ -68,39 +135,43 @@ const FindCars = () => {
           <div className="d-flex justify-content-center">
             <Card className="shadow">
               <Card.Body className="p-4">
-                <Form id="myForm" action="#" method="get" onsubmit="return false">
+                <Form id="myForm" action="#" method="get">
                   <Row>
                     <div
                       className="d-flex flex-xl-row flex-lg-row flex-md-column flex-sm-column flex-column justify-content-around align-items-xl-end align-items-lg-end align-items-sm-center align-items-md-center align-items-center gap-2">
-                      <div
+                      <Form.Group
                         className="d-flex flex-column align-items-xl-start align-items-lg-start align-items-md-center align-items-sm-center align-items-center justify-content-center">
                         <Form.Label for="cars">Tipe Driver</Form.Label>
-                        <Form.Select id="tipe-driver" aria-label="Default select example">
-                          <option selected disabled hidden value="Default">Pilih tipe driver</option>
+                        <Form.Select
+                          id="tipe-driver"
+                          aria-label="Default select example"
+                          // value={formValue.tipe}
+                          onChange={(e) => setFormValue({ ...formValue, tipe: e.target.value })}>
+                          <option selected value="Default">Pilih tipe driver</option>
                           <option value="true">Dengan supir</option>
                           <option value="false">Tanpa Sopir (Lepas Kunci)</option>
                         </Form.Select>
-                      </div>
+                      </Form.Group>
                       <Form.Group
                         className="d-flex flex-column align-items-xl-start align-items-lg-start align-items-md-center align-items-sm-center align-items-center justify-content-center">
                         <Form.Label for="tanggal">Tanggal</Form.Label>
-                        <Form.Control id="tanggal" type="date" className="find__forms" placeholder="Pilih tanggal" />
+                        <Form.Control id="tanggal" type="date" className="find__forms" placeholder="Pilih tanggal" onChange={(e) => setFormValue({ ...formValue, tanggal: e.target.value })} />
                       </Form.Group>
                       <Form.Group
                         className="d-flex flex-column align-items-xl-start align-items-lg-start align-items-md-center align-items-sm-center align-items-center justify-content-center">
                         <Form.Label for="waktu-jemput">Waktu Jemput/Ambil<sup
                           style={{ color: "red" }}>*</sup></Form.Label>
                         <Form.Control className="find__forms" type="time" name="time" id="waktu-jemput"
-                          placeholder="Pilih waktu" required disabled />
+                          placeholder="Pilih waktu" required onChange={(e) => setFormValue({ ...formValue, jemput: e.target.value })} />
                       </Form.Group>
-                      <div
+                      <Form.Group
                         className="d-flex flex-column align-items-xl-start align-items-lg-start align-items-md-center align-items-sm-center align-items-center justify-content-center">
                         <Form.Label for="jumlah-penumpang">Jumlah Penumpang (optional)</Form.Label>
                         <Form.Control id="jumlah-penumpang" type="number" name=""
-                          placeholder="Jumlah penumpang" />
-                      </div>
+                          placeholder="Jumlah penumpang" onChange={(e) => setFormValue({ ...formValue, penumpang: e.target.value })} />
+                      </Form.Group>
                       <div className="mt-xl-0 mt-lg-0 mt-md-2 mt-sm-2 mt-2">
-                        <Button id="load-btn" type="submit" className="btn-lime-green">Cari Mobil</Button>
+                        <Button id="load-btn" type="submit" className="btn-lime-green" onClick={handleSubmit}>Cari Mobil</Button>
                       </div>
                     </div>
                   </Row>
@@ -114,8 +185,43 @@ const FindCars = () => {
       <section className="cars" id="cars">
         <Container fluid={"md"}>
           <h1 className="mb-2 text-title__2 cari"></h1>
-          <div id="cars-container" className="row row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 gy-3">
-          </div>
+          <Row xl={3} lg={3} md={2} sm={2} xs={1} id="cars-container" className="gy-3">
+            {filterData.map((data) => {
+              return (
+                <Col>
+                  <Card className='shadow'>
+                    {/* <img src="" class="card-img-top" alt="${data.manufacture}" /> */}
+                    <Card.Img src={`./images${data.image.slice(8)}`} className='card-img-top' thumbnail />
+                    <Card.Body>
+                      <Card.Body className="p-0">
+                        <Card.Subtitle className="text-desc__2">{data.manufacture} {data.model} / {data.type}</Card.Subtitle>
+                        <Card.Title className="text-title__3 my-2">Rp {data.rentPerDay.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} / hari</Card.Title>
+                        <Card.Text className="text-desc desc mb-3">{data.description}</Card.Text>
+                      </Card.Body>
+                      <ListGroup className="list-group-flush gap-2 mt-4">
+                        <ListGroup.Item className="d-flex gap-2">
+                          <img src={User} alt="" title="" />
+                          <p className="text-desc">{data.capacity} Orang</p>
+                        </ListGroup.Item>
+                        <ListGroup.Item className="d-flex gap-2">
+                          <img src={Setting} alt="" title="" />
+                          <p className="text-desc">{data.transmission}</p>
+                        </ListGroup.Item>
+                        <ListGroup.Item className="d-flex gap-2">
+                          <img src={Calender} alt="" title="" />
+                          <p className="text-desc">Tahun {data.year}</p>
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                          <p className="text-desc">{data.available === true ? "Dengan supir" : "Tanpa Supir"}</p>
+                        </ListGroup.Item>
+                      </ListGroup>
+                      <button className="button btn-lime-green mt-4">Pilih Mobil</button>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              )
+            })}
+          </Row>
         </Container>
       </section>
 

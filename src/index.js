@@ -10,12 +10,13 @@ import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
 
 import "./assets/css/style.css"
 import LandingPage from './pages/LandingPage';
+import FindCars from './pages/FindCars';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     {/* <App /> */}
-    <LandingPage />
+    <FindCars />
   </React.StrictMode>
 );
 
