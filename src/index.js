@@ -9,14 +9,12 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.bundle.min";
 
 import "./assets/css/style.css"
-import LandingPage from './pages/LandingPage';
-import FindCars from './pages/FindCars';
+import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <App /> */}
-    <FindCars />
+    <App />
   </React.StrictMode>
 );
 
