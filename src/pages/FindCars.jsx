@@ -15,13 +15,13 @@ import User from "../assets/svg/fi_users.svg";
 import Setting from "../assets/svg/fi_settings.svg";
 import Calender from "../assets/svg/fi_calendar.svg";
 import CarIMG from "../assets/img/img_car.png";
-// import * as Img from '../assets/images/'
 import { useEffect, useState } from 'react';
 
 const FindCars = () => {
   const [data, setData] = useState([])
   const [formValue, setFormValue] = useState([])
   const [filterData, setFilterData] = useState([])
+  const [text, setText] = useState("")
   const api = "https://raw.githubusercontent.com/fnurhidayat/probable-garbanzo/main/data/cars.min.json"
 
   const getData = async () => {
@@ -37,48 +37,37 @@ const FindCars = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // const tipe = e.target.value
-    // if (tipe === "Default") {
-    //   setFilterData(data)
-    // } else {
-    //   const filterData = data.filter((data) => data.available === Boolean(tipe))
-
-    //   setFilterData(filterData)
-    // }
 
     const filter = data.filter((data) => {
-      const dataTime = new Date(data.availableAt)
-      const miliDataTime = Number(dataTime.getTime())
-      const dateFilter = miliDataTime > formValue.jemput
-      const capacityFilter = data.capacity == formValue.penumpang
+      const dataTime = data.availableAt.slice(0, 10)
+      const dateFilter = dataTime > formValue.tanggal
+      const capacityFilter = data.capacity >= formValue.penumpang
       const tipe = formValue.tipe === "true" ? true : false
-      // const nameDriver = tipe === true ? "Dengan Supir" : "Tanpa Supir"
+      const nameDriver = tipe === true ? "Dengan Supir" : "Tanpa Supir"
       const tipeDriverFilter = tipe === data.available
 
-      
       if (formValue.tipe && formValue.jemput && formValue.tanggal && formValue.penumpang) {
+        setText(`Menampilkan mobil ${nameDriver} dengan tanggal ${formValue.tanggal} dan jumlah penumpang lebih dari ${formValue.penumpang} orang`)
         return tipeDriverFilter && capacityFilter && dateFilter
+      } else if (formValue.tipe == "Default") {
+        setText(`Menampilkan semua mobil`)
+        return data
       } else if (formValue.tipe && formValue.jemput && formValue.tanggal) {
-        console.log("kk");
+        setText(`Menampilkan mobil ${nameDriver} dengan tanggal ${formValue.tanggal}`)
         return tipeDriverFilter && dateFilter
       } else if (formValue.tipe && formValue.penumpang) {
-        console.log("ll");
+        setText(`Menampilkan mobil ${nameDriver} dan jumlah penumpang lebih dari ${formValue.penumpang} orang`)
         return tipeDriverFilter && capacityFilter
       } else if (formValue.tipe) {
+        setText(`Menampilkan mobil ${nameDriver}`)
         return tipeDriverFilter
-      } else if (formValue.tipe === "Default") {
-        return data
-      } {
+      } else {
+        setText(`Tidak ada mobil`)
         return false
       }
-      // console.log(formValue.tipe);
-      // data.available === Boolean(tipe)
     })
-    console.log(filter);
 
     setFilterData(filter)
-
-    // console.log(formValue);
   }
 
   return (
@@ -141,37 +130,38 @@ const FindCars = () => {
                       className="d-flex flex-xl-row flex-lg-row flex-md-column flex-sm-column flex-column justify-content-around align-items-xl-end align-items-lg-end align-items-sm-center align-items-md-center align-items-center gap-2">
                       <Form.Group
                         className="d-flex flex-column align-items-xl-start align-items-lg-start align-items-md-center align-items-sm-center align-items-center justify-content-center">
-                        <Form.Label for="cars">Tipe Driver</Form.Label>
+                        <Form.Label htmlFor="cars">Tipe Driver</Form.Label>
                         <Form.Select
                           id="tipe-driver"
                           aria-label="Default select example"
-                          // value={formValue.tipe}
+                          required
                           onChange={(e) => setFormValue({ ...formValue, tipe: e.target.value })}>
-                          <option selected value="Default">Pilih tipe driver</option>
+                          <option selected disabled>Pilih tipe driver</option>
+                          <option value="Default">Semua</option>
                           <option value="true">Dengan supir</option>
                           <option value="false">Tanpa Sopir (Lepas Kunci)</option>
                         </Form.Select>
                       </Form.Group>
                       <Form.Group
                         className="d-flex flex-column align-items-xl-start align-items-lg-start align-items-md-center align-items-sm-center align-items-center justify-content-center">
-                        <Form.Label for="tanggal">Tanggal</Form.Label>
+                        <Form.Label htmlFor="tanggal">Tanggal</Form.Label>
                         <Form.Control id="tanggal" type="date" className="find__forms" placeholder="Pilih tanggal" onChange={(e) => setFormValue({ ...formValue, tanggal: e.target.value })} />
                       </Form.Group>
                       <Form.Group
                         className="d-flex flex-column align-items-xl-start align-items-lg-start align-items-md-center align-items-sm-center align-items-center justify-content-center">
-                        <Form.Label for="waktu-jemput">Waktu Jemput/Ambil<sup
+                        <Form.Label htmlFor="waktu-jemput">Waktu Jemput/Ambil<sup
                           style={{ color: "red" }}>*</sup></Form.Label>
                         <Form.Control className="find__forms" type="time" name="time" id="waktu-jemput"
                           placeholder="Pilih waktu" required onChange={(e) => setFormValue({ ...formValue, jemput: e.target.value })} />
                       </Form.Group>
                       <Form.Group
                         className="d-flex flex-column align-items-xl-start align-items-lg-start align-items-md-center align-items-sm-center align-items-center justify-content-center">
-                        <Form.Label for="jumlah-penumpang">Jumlah Penumpang (optional)</Form.Label>
+                        <Form.Label htmlFor="jumlah-penumpang">Jumlah Penumpang (optional)</Form.Label>
                         <Form.Control id="jumlah-penumpang" type="number" name=""
                           placeholder="Jumlah penumpang" onChange={(e) => setFormValue({ ...formValue, penumpang: e.target.value })} />
                       </Form.Group>
                       <div className="mt-xl-0 mt-lg-0 mt-md-2 mt-sm-2 mt-2">
-                        <Button id="load-btn" type="submit" className="btn-lime-green" onClick={handleSubmit}>Cari Mobil</Button>
+                        <Button id="load-btn" type="submit" className="btn-lime-green" variant='success' onClick={handleSubmit}>Cari Mobil</Button>
                       </div>
                     </div>
                   </Row>
@@ -184,7 +174,7 @@ const FindCars = () => {
 
       <section className="cars" id="cars">
         <Container fluid={"md"}>
-          <h1 className="mb-2 text-title__2 cari"></h1>
+          <h1 className="mb-2 text-title__2 cari">{text ? `${text}(${filterData.length})` : ""}</h1>
           <Row xl={3} lg={3} md={2} sm={2} xs={1} id="cars-container" className="gy-3">
             {filterData.map((data) => {
               return (
