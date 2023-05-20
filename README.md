@@ -6,13 +6,13 @@ This is a project for Challenge Chapter 06 in Binar Academy.
 Clone the project  
 
 ~~~bash  
-  git clone https://github.com/Brahmastabagus/Binar-Challenge-06.git
+git clone https://github.com/Brahmastabagus/Binar-Challenge-06.git
 ~~~
 
 Go to the project directory  
 
 ~~~bash  
-  cd Binar-Challenge-06
+cd Binar-Challenge-06
 ~~~
 
 Install dependencies  

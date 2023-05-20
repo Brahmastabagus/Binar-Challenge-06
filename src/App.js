@@ -1,6 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
-import FindCars from "./pages/FindCars";
+import FindCars from './pages/FindCars/Index'
 
 function App() {
   const router = createBrowserRouter([
