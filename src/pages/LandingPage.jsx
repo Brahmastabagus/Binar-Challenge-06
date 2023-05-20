@@ -25,12 +25,6 @@ import { Link } from 'react-router-dom';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 
-const responsive = {
-  0: { items: 1 },
-  700: { items: 2 },
-  768: { items: 2 },
-};
-
 const items = [
   <div class="card align-items-center gap-4 testimonial__cards me-2">
     <img src={Photo1} class="testimonial__img-testimonial" alt="..." />
